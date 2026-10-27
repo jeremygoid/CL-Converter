@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CL Rx">
+<meta name="theme-color" content="#0B1317">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>CL Rx Converter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: settings strip on top, one entry+result card per eye; stacked on phone, side by side from 760px. */
+:root {
+  --bg: #EEF3F5;
+  --surface: #FFFFFF;
+  --ink: #0E1C24;
+  --muted: #566871;
+  --line: #D3DEE3;
+  --accent: #0A6C86;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DCEEF3;
+  --ok: #18794E;
+  --ok-soft: #DDF3E6;
+  --warn: #8A5200;
+  --warn-soft: #FBEBCF;
+  --crit: #B3261E;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1317; --surface: #121E25; --ink: #E6EEF2; --muted: #8FA2AD; --line: #24353F;
+    --accent: #4FC0DC; --accent-ink: #06222B; --accent-soft: #12323C;
+    --ok: #5BD08F; --ok-soft: #12301F; --warn: #F0B45A; --warn-soft: #38290F; --crit: #FF8A80;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1317; --surface: #121E25; --ink: #E6EEF2; --muted: #8FA2AD; --line: #24353F;
+  --accent: #4FC0DC; --accent-ink: #06222B; --accent-soft: #12323C;
+  --ok: #5BD08F; --ok-soft: #12301F; --warn: #F0B45A; --warn-soft: #38290F; --crit: #FF8A80;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding-block: 20px 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+h1 { font-size: 22px; line-height: 1.2; margin: 0; font-weight: 600; text-wrap: balance; }
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.eyebrow { font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+.settings { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.setting-row { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field > label, .field > .lbl { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
+.stepper { display: flex; align-items: stretch; gap: 6px; }
+.stepper input {
+  width: 112px; min-width: 0; height: 46px; text-align: center;
+  font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+  color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 0 6px;
+}
+.stepper input.narrow { width: 80px; }
+button, select { font-family: var(--font-body); }
+.btn {
+  min-width: 46px; height: 46px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); font-size: 18px; font-weight: 500; cursor: pointer; padding: 0 10px;
+}
+.btn:active { background: var(--accent-soft); }
+.btn.flip { font-size: 15px; font-weight: 600; color: var(--accent); }
+.btn.text { font-size: 14px; padding: 0 14px; min-height: 40px; height: auto; color: var(--accent); font-weight: 600; }
+select {
+  height: 46px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  font-size: 16px; padding: 0 10px; font-family: var(--font-mono);
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); flex: none; }
+.hint { color: var(--muted); font-size: 13px; }
+.locked {
+  display: flex; align-items: center; min-height: 46px; padding: 0 12px; border-radius: 8px;
+  background: var(--bg); border: 1px dashed var(--line); color: var(--muted);
+  font-family: var(--font-mono); font-size: 15px; user-select: none;
+}
+.locked.wide { font-size: 13px; padding: 10px 12px; }
+.toric { background: var(--accent-soft); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.toric .eyebrow { color: var(--accent); }
+.trx { font-family: var(--font-mono); font-size: clamp(16px, 5vw, 24px); font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; overflow-x: auto; white-space: nowrap; }
+.tnote { font-size: 13px; color: var(--muted); }
+.meters { font-family: var(--font-mono); font-size: 14px; color: var(--muted); align-self: center; padding-bottom: 12px; }
+
+.eyes { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 760px) { .eyes { grid-template-columns: 1fr 1fr; } }
+.eye-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.eye-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.eye-head .abbr { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-weight: 500; }
+.rx-row { display: flex; flex-wrap: wrap; gap: 12px 14px; }
+.result { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.big { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.big .num { font-family: var(--font-mono); font-size: 44px; line-height: 1; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.big .unit { font-family: var(--font-mono); font-size: 16px; color: var(--muted); }
+.big .empty { font-size: 15px; color: var(--muted); }
+dl.rows { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; }
+dl.rows dt { color: var(--muted); }
+dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.badge { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.badge.ok { background: var(--ok-soft); color: var(--ok); }
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.badge.toric { background: var(--accent-soft); color: var(--accent); }
+.formula { font-family: var(--font-mono); font-size: 13px; color: var(--muted); overflow-x: auto; white-space: nowrap; padding: 10px 12px; background: var(--bg); border-radius: 8px; border: 1px solid var(--line); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.note { font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: background 0.12s; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Spectacle → contact lens</div>
+    <h1>CL Rx Converter</h1>
+    <p class="sub">Sphero-cylinder spectacle Rx to a spherical CL power, with vertex distance compensation.</p>
+  </header>
+
+  <section class="card settings" aria-label="Conversion settings">
+    <div class="setting-row">
+      <div class="field">
+        <span class="lbl">Vertex distance</span>
+        <div class="locked" id="vd">12 mm (0.012 m)</div>
+      </div>
+      <div class="field">
+        <span class="lbl">Rounding</span>
+        <div class="locked" id="rnd">0.25 D</div>
+      </div>
+    </div>
+    <div class="locked wide" id="thr">Vertex compensation applied only when sphere is stronger than ±4.00 D. At ±4.00 D or weaker, no vertex change.</div>
+    <div class="actions">
+      <button class="btn text" type="button" id="clear">Clear all</button>
+    </div>
+  </section>
+
+  <div class="eyes" id="eyes"></div>
+
+  </div>
+
+<script>
+(function () {
+  var EXAMPLES = [
+    { key: 'od', name: 'Right eye', abbr: 'OD', s: '', c: '', a: '' },
+    { key: 'os', name: 'Left eye', abbr: 'OS', s: '', c: '', a: '' }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+
+  function parseNum(v) {
+    if (v == null) return NaN;
+    var t = String(v).trim().replace(',', '.').replace(/[−–]/g, '-');
+    if (t === '' || t === '-' || t === '+' || t === '.') return NaN;
+    var n = Number(t);
+    return isFinite(n) ? n : NaN;
+  }
+  function fmt(n) {
+    if (!isFinite(n)) return '–';
+    var r = Math.round(n * 100) / 100;
+    if (r === 0) return '0.00';
+    return (r > 0 ? '+' : '-') + Math.abs(r).toFixed(2);
+  }
+  function fmt2(n) { var r = Math.round(n * 100) / 100; return (r > 0 ? '+' : r < 0 ? '-' : '') + Math.abs(r).toFixed(2); }
+  function fmtPlain(n) { return (Math.round(n * 1000) / 1000).toString(); }
+
+  // Round to nearest step, symmetric for + and - (so -4.125 and +4.125 behave the same)
+  function roundStep(x, step) {
+    var r = Math.sign(x) * Math.round(Math.abs(x) / step) * step;
+    r = Math.round(r * 100) / 100;
+    return r === 0 ? 0 : r;
+  }
+  // Vertex compensation only when the spherical power is stronger than +/-4.00 D
+  function needsVertex(s) { return Math.abs(s) > 4 + 1e-9; }
+
+  function convert(s, c, d, step, thresholdOnly) {
+    var se = s + c / 2;
+    var apply = !thresholdOnly || needsVertex(s);
+    var den = 1 - d * se;
+    var raw = apply && den > 0.05 ? se / den : se;
+    return { se: se, raw: raw, r: roundStep(raw, step), apply: apply };
+  }
+
+  function toricRx(s, c, axis, d, step) {
+    var a = axis;
+    var apply = needsVertex(s);
+    if (c > 0) { s = s + c; c = -c; a = a > 90 ? a - 90 : a + 90; }
+    var f1 = s, f2 = s + c;
+    function comp(f) { var den = 1 - d * f; return apply && den > 0.05 ? f / den : f; }
+    function rd(x) { return roundStep(x, step); }
+    // Full-precision calculation; rounding to 0.25 D happens only on the final Rx values
+    var m1 = comp(f1), m2 = comp(f2), mc = m2 - m1;
+    return { sph: rd(m1), cyl: rd(mc), axis: a, apply: apply, m1: m1, m2: m2, mc: mc };
+  }
+
+  function toricHtml(s, c, axisStr, d, step) {
+    var ac = Math.abs(c);
+    var head = '<div class="toric"><div class="eyebrow">Toric CL Rx</div>';
+    var axN = parseNum(axisStr);
+    if (ac === 0) return head + '<div class="tnote">No cylinder, so no toric lens is needed.</div></div>';
+    if (!isFinite(axN) || axN < 1 || axN > 180) return head + '<div class="tnote">Enter an axis from 1 to 180 to see the toric Rx.</div></div>';
+    var t = toricRx(s, c, Math.round(axN), d, step);
+    if (t.cyl === 0) return head + '<div class="tnote">Cylinder rounds to plano after conversion. Use the spherical lens.</div></div>';
+    var rec = ac >= 1 ? 'Recommended for this cylinder.' : ac >= 0.75 ? 'Borderline cylinder, consider toric.' : 'Reference only. A spherical lens is suitable at this cylinder.';
+    var vx = t.apply ? ' Both meridians vertex compensated.' : ' Vertex compensation not applied.';
+    return head + '<div class="trx">' + fmt(t.sph) + ' / ' + fmt(t.cyl) + ' × ' + t.axis + '</div>' +
+      '<div class="tnote">Sph / Cyl × Axis. ' + rec + vx + '</div>' +
+      '<div class="tnote">Unrounded: ' + fmt2(t.m1) + ' / ' + fmt2(t.mc) + ' × ' + t.axis + ' (meridians ' + fmt2(t.m1) + ' and ' + fmt2(t.m2) + '). Rounded to 0.25 D only at the end.</div></div>';
+  }
+
+  function field(eye, id, label, cls, signed) {
+    var inputId = eye.key + '-' + id;
+    var flip = signed ? '<button class="btn flip" type="button" data-flip="' + inputId + '" aria-label="Flip sign of ' + label + '">±</button>' : '';
+    var steps = signed
+      ? '<input id="' + inputId + '" type="text" inputmode="decimal" placeholder="0.00" aria-label="' + eye.name + ' ' + label + '" value="' + eye[id] + '">' + flip
+      : '<input id="' + inputId + '" class="narrow" type="text" inputmode="numeric" placeholder="0" aria-label="' + eye.name + ' axis" value="' + eye[id] + '">';
+    return '<div class="field"><span class="lbl">' + label + '</span><div class="stepper">' + steps + '</div></div>';
+  }
+
+  function buildEyes() {
+    $('eyes').innerHTML = EXAMPLES.map(function (e) {
+      return '<section class="card" aria-label="' + e.name + '">' +
+        '<div class="eye-head"><h2>' + e.name + '</h2><span class="abbr">' + e.abbr + '</span></div>' +
+        '<div class="rx-row">' + field(e, 's', 'Sphere', '', true) + field(e, 'c', 'Cylinder', '', true) + field(e, 'a', 'Axis °', '', false) + '</div>' +
+        '<div class="result" id="' + e.key + '-res"></div></section>';
+    }).join('');
+  }
+
+  function render() {
+    var d = 0.012;
+    var step = 0.25;
+    var thr = true;
+
+    EXAMPLES.forEach(function (e) {
+      var s = parseNum($(e.key + '-s').value);
+      var cRaw = $(e.key + '-c').value.trim();
+      var c = cRaw === '' ? 0 : parseNum(cRaw);
+      var axis = $(e.key + '-a').value.trim();
+      var out = $(e.key + '-res');
+      if (!isFinite(s) || !isFinite(c)) {
+        out.innerHTML = '<div class="big"><span class="empty">Enter the sphere power to see the CL Rx.</span></div>';
+        return;
+      }
+      var v = convert(s, c, d, step, thr);
+      var ac = Math.abs(c);
+      var badge = ac < 0.75 ? '<span class="badge ok">Spherical CL suitable</span>'
+        : ac < 1.0 ? '<span class="badge warn">Borderline, consider toric</span>'
+        : '<span class="badge toric">Toric CL recommended</span>';
+      out.innerHTML =
+        '<div class="big"><span class="num">' + fmt(v.r) + '</span><span class="unit">D sphere</span></div>' +
+        badge +
+        toricHtml(s, c, axis, d, step);
+    });
+  }
+
+  function nudge(id, by) {
+    var el = $(id);
+    var cur = parseNum(el.value);
+    if (!isFinite(cur)) cur = 0;
+    var n = Math.round((cur + by) * 100) / 100;
+    el.value = id === 'vd' ? String(n) : (n === 0 ? '0.00' : n.toFixed(2));
+    render();
+  }
+
+  function setValues(vals) {
+    EXAMPLES.forEach(function (e, i) {
+      $(e.key + '-s').value = vals[i].s;
+      $(e.key + '-c').value = vals[i].c;
+      $(e.key + '-a').value = vals[i].a;
+    });
+    render();
+  }
+
+  buildEyes();
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('button');
+    if (!t) return;
+    if (t.dataset.step) nudge(t.dataset.target, parseFloat(t.dataset.step));
+    else if (t.dataset.flip) {
+      var el = $(t.dataset.flip);
+      var n = parseNum(el.value);
+      if (isFinite(n)) { el.value = (n === 0 ? 0 : -n).toFixed(2); render(); }
+    }
+  });
+  document.addEventListener('input', render);
+  $('clear').addEventListener('click', function () {
+    setValues([{ s: '', c: '', a: '' }, { s: '', c: '', a: '' }]);
+  });
+  render();
+})();
+</script>
+
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+</body>
+</html>
