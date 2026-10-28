@@ -12,7 +12,19 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>CL Rx Converter</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<style>
+@font-face {
+  font-family: 'Bouncy';
+  src: url('bouncy-black.otf') format('opentype');
+  font-display: swap;
+}
+.credit {
+  font-family: 'Bouncy', cursive;
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  color: #22d3ee;
+  margin: 4px 0 6px;
+}
+  <style>
 /* Layout: settings strip on top, one entry+result card per eye; stacked on phone, side by side from 760px. */
 :root {
   --bg: #EEF3F5;
@@ -132,6 +144,7 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
   <header>
     <div class="eyebrow">Spectacle → contact lens</div>
     <h1>CL Rx Converter</h1>
+    <p class="credit">By Dr. Chukemeke N. OJIBI</p>
     <p class="sub">Sphero-cylinder spectacle Rx to a spherical CL power, with vertex distance compensation.</p>
   </header>
 
@@ -308,17 +321,5 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
 
 <script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
 
-<footer style="
-  max-width: 880px;
-  margin: 32px auto 24px;
-  padding: 0 16px;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  user-select: none;
-">
-  By Doc Chukemeke N. OJIBI
-</footer>
 </body>
 </html>
