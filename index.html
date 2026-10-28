@@ -125,13 +125,16 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
 .note { font-size: 12.5px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: background 0.12s; } }
 
-/* Credit line under the title: normal upper/lower case, italic */
+/* Credit line under the title, in the Bouncy font */
+@font-face {
+  font-family: 'Bouncy';
+  src: url('bouncy-black.otf') format('opentype');
+  font-display: swap;
+}
 .credit {
-  font-family: Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: 0.01em;
+  font-family: 'Bouncy', cursive;
+  font-size: 22px;
+  letter-spacing: 0.03em;
   text-transform: none;
   color: var(--accent);
   margin: 4px 0 6px;
