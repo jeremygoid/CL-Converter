@@ -57,7 +57,7 @@ body {
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 .wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-h1 { font-size: 22px; line-height: 1.2; margin: 0; font-weight: 600; text-wrap: balance; }
+h1 { font-size: 14px; line-height: 1.2; margin: 0; font-weight: 600; text-wrap: balance; }
 .sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
 .eyebrow { font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
@@ -125,16 +125,14 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
 .note { font-size: 12.5px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: background 0.12s; } }
 
-/* Credit line under the title, in the Bouncy font */
-@font-face {
-  font-family: 'Bouncy';
-  src: url('bouncy-black.otf') format('opentype');
-  font-display: swap;
-}
+/* Credit line under the title: normal upper/lower case, italic */
 .credit {
-  font-family: 'Bouncy', cursive;
-  font-size: 22px;
-  letter-spacing: 0.03em;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+  text-transform: none;
   color: var(--accent);
   margin: 4px 0 6px;
 }
@@ -146,7 +144,7 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
   <header>
     <div class="eyebrow">Spectacle → contact lens</div>
     <h1>CL Rx Converter</h1>
-    <p class="credit">By Dr. Chukemeke N. OJIBI</p>
+    <p class="credit">by Dr Chukuemeke N. OJIBI</p>
     <p class="sub">Sphero-cylinder spectacle Rx to a spherical CL power, with vertex distance compensation.</p>
   </header>
 
