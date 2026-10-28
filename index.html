@@ -12,19 +12,7 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 <title>CL Rx Converter</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-@font-face {
-  font-family: 'Bouncy';
-  src: url('bouncy-black.otf') format('opentype');
-  font-display: swap;
-}
-.credit {
-  font-family: 'Bouncy', cursive;
-  font-size: 22px;
-  letter-spacing: 0.03em;
-  color: #22d3ee;
-  margin: 4px 0 6px;
-}
-  <style>
+<style>
 /* Layout: settings strip on top, one entry+result card per eye; stacked on phone, side by side from 760px. */
 :root {
   --bg: #EEF3F5;
@@ -136,6 +124,20 @@ dl.rows dd { margin: 0; font-family: var(--font-mono); text-align: right; font-v
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .note { font-size: 12.5px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .btn { transition: background 0.12s; } }
+
+/* Credit line under the title, in the Bouncy font */
+@font-face {
+  font-family: 'Bouncy';
+  src: url('bouncy-black.otf') format('opentype');
+  font-display: swap;
+}
+.credit {
+  font-family: 'Bouncy', cursive;
+  font-size: 22px;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  margin: 4px 0 6px;
+}
 </style>
 
 </head>
